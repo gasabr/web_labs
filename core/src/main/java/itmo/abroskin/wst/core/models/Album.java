@@ -18,7 +18,7 @@ public class Album {
 
     private Date date;
 
-    private Integer n_songs;
+    private Integer billboardDebut;
 
     private String publisher;
 }

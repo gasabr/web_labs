@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaRepositories
-@ComponentScan("itmo.abroskin.wst.itmo.abroskin.wst.core")
-@EntityScan("itmo.abroskin.wst.itmo.abroskin.wst.core.models")
+@ComponentScan("itmo.abroskin.wst.core")
+@EntityScan("itmo.abroskin.wst.core.models")
 public class CoreConfiguration {
 }

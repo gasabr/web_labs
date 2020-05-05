@@ -29,12 +29,12 @@ public class WSConfiguration extends WsConfigurerAdapter {
     }
 
     @Bean(name = "albums")
-    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema beerSchema) {
+    public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema albumSchema) {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
         wsdl11Definition.setPortTypeName("AlbumPort");
         wsdl11Definition.setLocationUri("/ws");
         wsdl11Definition.setTargetNamespace("itmo.abroskin.wst");
-        wsdl11Definition.setSchema(beerSchema);
+        wsdl11Definition.setSchema(albumSchema);
         return wsdl11Definition;
     }
 
@@ -52,7 +52,7 @@ public class WSConfiguration extends WsConfigurerAdapter {
     }
 
     @Bean
-    public XsdSchema beerSchema() {
+    public XsdSchema albumSchema() {
         return new SimpleXsdSchema(new ClassPathResource("album-schema.xsd"));
     }
 }

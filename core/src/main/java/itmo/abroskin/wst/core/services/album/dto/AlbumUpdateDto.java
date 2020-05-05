@@ -19,7 +19,7 @@ public class AlbumUpdateDto {
 
     private Date date;
 
-    private Integer n_songs;
+    private Integer billboardDebut;
 
     private String publisher;
 
@@ -47,12 +47,12 @@ public class AlbumUpdateDto {
         this.date = date;
     }
 
-    public Integer getN_songs() {
-        return n_songs;
+    public Integer getBillboardDebut() {
+        return billboardDebut;
     }
 
-    public void setN_songs(Integer n_songs) {
-        this.n_songs = n_songs;
+    public void setBillboardDebut(Integer billboardDebut) {
+        this.billboardDebut = billboardDebut;
     }
 
     public String getPublisher() {
