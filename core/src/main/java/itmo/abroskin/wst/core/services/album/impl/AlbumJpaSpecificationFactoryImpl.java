@@ -5,11 +5,13 @@ import itmo.abroskin.wst.core.models.Album_;
 import itmo.abroskin.wst.core.services.album.AlbumJpaSpecificationFactory;
 import itmo.abroskin.wst.core.services.album.dto.AlbumSearchQueryDto;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class AlbumJpaSpecificationFactoryImpl implements AlbumJpaSpecificationFactory {
     @Override
     public Specification<Album> search(final AlbumSearchQueryDto queryDto) {
