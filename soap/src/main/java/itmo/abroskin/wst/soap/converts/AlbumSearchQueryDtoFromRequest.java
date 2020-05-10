@@ -16,8 +16,13 @@ public class AlbumSearchQueryDtoFromRequest implements Converter<GetAlbumsReques
 
         query.setName(source.getName());
         query.setAuthor(source.getAuthor());
-        Date releaseDate = new Date(source.getReleaseDate().getMillisecond());
-        query.setDate(releaseDate);
+        if (source.getReleaseDate() != null) {
+            Date releaseDate = new Date(source.getReleaseDate().getMillisecond());
+            query.setDate(releaseDate);
+        } else {
+            query.setDate(null);
+        }
+
         query.setBillboardDebut(source.getBillboardDebut());
         query.setPublisher(source.getPublisher());
 

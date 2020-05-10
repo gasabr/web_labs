@@ -31,7 +31,7 @@ public class AlbumJpaSpecificationFactoryImpl implements AlbumJpaSpecificationFa
             }
 
             if (queryDto.getDate() != null) {
-                predicates.add(criteriaBuilder.equal(root.get(Album_.DATE), queryDto.getDate()));
+                predicates.add(criteriaBuilder.equal(root.get(Album_.RELEASE_DATE), queryDto.getDate()));
             }
 
             if (queryDto.getName() != null) {
