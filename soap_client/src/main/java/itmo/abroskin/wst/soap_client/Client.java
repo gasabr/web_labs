@@ -1,4 +1,4 @@
-package itmo.abroskin.wst.soap;
+package itmo.abroskin.wst.soap_client;
 
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -15,7 +15,7 @@ import java.util.concurrent.Callable;
 
 @Command(name = "soap_client", mixinStandardHelpOptions = true, version = "0.1",
         description = "soap client for wst labs.")
-class SoapClient implements Callable<Integer> {
+public class Client implements Callable<Integer> {
 
     @Option(names = {"--name"}, description = "The file whose checksum to calculate.")
     private String name;
@@ -38,7 +38,7 @@ class SoapClient implements Callable<Integer> {
     // this example implements Callable, so parsing, error handling and handling user
     // requests for usage help or version help can be done with one line of code.
     public static void main(String... args) {
-        int exitCode = new CommandLine(new SoapClient()).execute(args);
+        int exitCode = new CommandLine(new Client()).execute(args);
         System.exit(exitCode);
     }
 

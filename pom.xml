@@ -18,6 +18,7 @@
     <modules>
         <module>core</module>
         <module>soap</module>
+        <module>soap_client</module>
     </modules>
 
 

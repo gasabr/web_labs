@@ -5,6 +5,9 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import wst.abroskin.itmo.AlbumDto;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.GregorianCalendar;
 
 @Component
@@ -20,7 +23,12 @@ public class AlbumDtoFromAlbum implements Converter<Album, AlbumDto> {
         dto.setPublisher(source.getPublisher());
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(source.getReleaseDate());
-        dto.setReleaseDate(c);
+        try {
+            XMLGregorianCalendar calendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+            dto.setReleaseDate(calendar);
+        } catch (DatatypeConfigurationException e) {
+            e.printStackTrace();
+        }
 
         return dto;
     }
