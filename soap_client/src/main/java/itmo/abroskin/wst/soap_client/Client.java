@@ -60,11 +60,14 @@ public class Client implements Callable<Integer> {
         request.setAuthor(author);
         request.setBillboardDebut(billboardTop);
         request.setPublisher(publisher);
+        request.setReleaseDate(null);
 
         GetAlbumsResponse response = (GetAlbumsResponse) webServiceTemplate.marshalSendAndReceive(
                 "http://localhost:8080/ws",
                 request
         );
+
+        System.out.println(response.getAlbums().toString());
 
         return 0;
     }
