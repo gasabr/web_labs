@@ -4,18 +4,29 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import picocli.CommandLine;
-import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import wst.abroskin.itmo.GetAlbumsRequest;
 import wst.abroskin.itmo.GetAlbumsResponse;
+import wst.abroskin.itmo.UpdateAlbumRequest;
+import wst.abroskin.itmo.UpdateAlbumResponse;
 
 import javax.xml.soap.MessageFactory;
 import java.time.Month;
 import java.util.concurrent.Callable;
 
-@Command(name = "soap_client", mixinStandardHelpOptions = true, version = "0.1",
+enum Command {
+    searchAlbum,
+    updateAlbum,
+    createAlbum,
+    deleteAlbum,
+}
+
+@CommandLine.Command(name = "soap_client", mixinStandardHelpOptions = true, version = "0.1",
         description = "soap client for wst labs.")
 public class Client implements Callable<Integer> {
+
+    @CommandLine.Parameters(index = "0", description = "Valid values: ${COMPLETION-CANDIDATES}")
+    private Command command;
 
     @Option(names = {"--name"}, description = "The file whose checksum to calculate.")
     private String name;
@@ -55,19 +66,43 @@ public class Client implements Callable<Integer> {
         webServiceTemplate.setMarshaller(marshaller);
         webServiceTemplate.setUnmarshaller(marshaller);
         webServiceTemplate.afterPropertiesSet();
-        GetAlbumsRequest request = new GetAlbumsRequest();
-        request.setName(name);
-        request.setAuthor(author);
-        request.setBillboardDebut(billboardTop);
-        request.setPublisher(publisher);
-        request.setReleaseDate(null);
 
-        GetAlbumsResponse response = (GetAlbumsResponse) webServiceTemplate.marshalSendAndReceive(
-                "http://localhost:8080/ws",
-                request
-        );
+        switch (command) {
+            case searchAlbum: {
+                GetAlbumsRequest request = new GetAlbumsRequest();
+                request.setName(name);
+                request.setAuthor(author);
+                request.setBillboardDebut(billboardTop);
+                request.setPublisher(publisher);
+                request.setReleaseDate(null);
 
-        System.out.println(response.getAlbums().toString());
+                GetAlbumsResponse response = (GetAlbumsResponse) webServiceTemplate.marshalSendAndReceive(
+                        "http://localhost:8080/ws",
+                        request
+                );
+
+                System.out.println(response.getAlbums().toString());
+            }
+            case createAlbum: {}
+            case deleteAlbum: {}
+            case updateAlbum: {
+                UpdateAlbumRequest request = new UpdateAlbumRequest();
+                // TODO: add error handling there
+                request.setId(id);
+                request.setAuthor(author);
+                request.setName(name);
+
+                UpdateAlbumResponse response = (UpdateAlbumResponse) webServiceTemplate.marshalSendAndReceive(
+                        "http://localhost:8080/ws",
+                        request
+                );
+                if (!response.getName().isEmpty()) {
+                    System.out.println(response.getName());
+                } else {
+                    System.out.println("Can not update album with error: " + response.getName());
+                }
+            }
+        }
 
         return 0;
     }

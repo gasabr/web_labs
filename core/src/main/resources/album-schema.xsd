@@ -30,4 +30,27 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+
+    <xs:element name="updateAlbumRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="author" type="xs:string"/>
+                <xs:element name="billboardDebut" type="xs:int"/>
+                <xs:element name="publisher" type="xs:string"/>
+                <xs:element name="releaseDate" type="xs:dateTime" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="updateAlbumResponse">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="name" type="xs:string" />
+                <xs:element name="error" type="xs:string"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
 </xs:schema>
