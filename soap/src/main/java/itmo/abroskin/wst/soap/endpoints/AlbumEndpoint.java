@@ -1,7 +1,9 @@
 package itmo.abroskin.wst.soap.endpoints;
 
 import itmo.abroskin.wst.core.models.Album;
+import itmo.abroskin.wst.core.services.album.dto.AlbumCreateDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumSearchQueryDto;
+import itmo.abroskin.wst.core.services.album.dto.AlbumUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
@@ -9,9 +11,7 @@ import itmo.abroskin.wst.core.services.album.AlbumCRUDService;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
-import wst.abroskin.itmo.AlbumDto;
-import wst.abroskin.itmo.GetAlbumsRequest;
-import wst.abroskin.itmo.GetAlbumsResponse;
+import wst.abroskin.itmo.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +39,34 @@ public class AlbumEndpoint {
                 .collect(Collectors.toList());
         final GetAlbumsResponse response = new GetAlbumsResponse();
         response.getAlbums().addAll(albumDtos);
+
+        return response;
+    }
+
+    @PayloadRoot(namespace = namespace, localPart = "createAlbumRequest")
+    @ResponsePayload
+    public CreateAlbumResponse createAlbum(@RequestPayload CreateAlbumRequest request) {
+        final AlbumCreateDto dto = conversionService.convert(request, AlbumCreateDto.class);
+        final CreateAlbumResponse response = new CreateAlbumResponse();
+
+        try {
+            long id = albumService.createAlbum(dto);
+            response.setId(id);
+        } catch (Exception e) {
+            response.setError(e.getMessage());
+        }
+        return response;
+    }
+
+    @PayloadRoot(namespace = namespace, localPart = "updateAlbumRequest")
+    @ResponsePayload
+    public UpdateAlbumResponse updateAlbum(@RequestPayload UpdateAlbumRequest request) {
+        final AlbumUpdateDto dto = conversionService.convert(request, AlbumUpdateDto.class);
+        final UpdateAlbumResponse response = new UpdateAlbumResponse();
+
+        albumService.updateAlbum(dto);
+
+        response.setName(dto != null ? dto.getName() : "");
 
         return response;
     }

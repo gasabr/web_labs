@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AlbumCreateServiceImpl implements AlbumCreateService {
     @Autowired
-    private AlbumRepository albumRepository;
+    private final AlbumRepository albumRepository;
 
     public AlbumCreateServiceImpl(AlbumRepository albumRepository) {
         this.albumRepository = albumRepository;

@@ -5,10 +5,7 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
-import wst.abroskin.itmo.GetAlbumsRequest;
-import wst.abroskin.itmo.GetAlbumsResponse;
-import wst.abroskin.itmo.UpdateAlbumRequest;
-import wst.abroskin.itmo.UpdateAlbumResponse;
+import wst.abroskin.itmo.*;
 
 import javax.xml.soap.MessageFactory;
 import java.time.Month;
@@ -82,12 +79,38 @@ public class Client implements Callable<Integer> {
                 );
 
                 System.out.println(response.getAlbums().toString());
+                break;
             }
-            case createAlbum: {}
-            case deleteAlbum: {}
+            case createAlbum: {
+                CreateAlbumRequest request = new CreateAlbumRequest();
+                request.setAuthor(author);
+                request.setName(name);
+                request.setPublisher(publisher);
+                request.setBillboardDebut(billboardTop);
+                request.setReleaseDate(null);
+
+                CreateAlbumResponse response = (CreateAlbumResponse) webServiceTemplate.marshalSendAndReceive(
+                        "http://localhost:8080/ws",
+                        request
+                );
+                System.out.println("Created album with id: " + response.getId());
+                break;
+            }
+            case deleteAlbum: {
+                DeleteAlbumRequest request = new DeleteAlbumRequest();
+                request.setId(id);
+
+                DeleteAlbumResponse response = (DeleteAlbumResponse) webServiceTemplate.marshalSendAndReceive(
+                        "http://localhost:8080/ws",
+                        request
+                );
+                if (!response.getError().isEmpty()) {
+                    System.out.println("Can not update album with error: " + response.getError());
+                }
+                break;
+            }
             case updateAlbum: {
                 UpdateAlbumRequest request = new UpdateAlbumRequest();
-                // TODO: add error handling there
                 request.setId(id);
                 request.setAuthor(author);
                 request.setName(name);
@@ -101,6 +124,7 @@ public class Client implements Callable<Integer> {
                 } else {
                     System.out.println("Can not update album with error: " + response.getName());
                 }
+                break;
             }
         }
 
