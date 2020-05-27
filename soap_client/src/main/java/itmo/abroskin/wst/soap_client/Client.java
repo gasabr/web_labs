@@ -8,8 +8,10 @@ import picocli.CommandLine.Option;
 import wst.abroskin.itmo.*;
 
 import javax.xml.soap.MessageFactory;
-import java.time.Month;
+import java.util.Date;
 import java.util.concurrent.Callable;
+
+import static itmo.abroskin.wst.core.utils.DateConverter.dateToGregorian;
 
 enum Command {
     searchAlbum,
@@ -31,8 +33,8 @@ public class Client implements Callable<Integer> {
     @Option(names = {"--author"}, description = "Author of the album.")
     private String author;
 
-    @Option(names = {"--release-month"}, description = "album release date")
-    private Month releaseMonth;
+    @Option(names = {"--releaseDate"}, description = "album release date")
+    private Date releaseDate;
 
     @Option(names = {"--billboardTop"}, description = "minimal suitable place in chart.")
     private Integer billboardTop;
@@ -42,13 +44,6 @@ public class Client implements Callable<Integer> {
 
     @Option(names = {"--id"})
     private Long id;
-
-    // this example implements Callable, so parsing, error handling and handling user
-    // requests for usage help or version help can be done with one line of code.
-    public static void main(String... args) {
-        int exitCode = new CommandLine(new Client()).execute(args);
-        System.exit(exitCode);
-    }
 
     @Override
     public Integer call() throws Exception {
@@ -71,7 +66,9 @@ public class Client implements Callable<Integer> {
                 request.setAuthor(author);
                 request.setBillboardDebut(billboardTop);
                 request.setPublisher(publisher);
-                request.setReleaseDate(null);
+                if (releaseDate != null) {
+                    request.setReleaseDate(dateToGregorian(releaseDate));
+                }
 
                 GetAlbumsResponse response = (GetAlbumsResponse) webServiceTemplate.marshalSendAndReceive(
                         "http://localhost:8080/ws",
@@ -87,7 +84,9 @@ public class Client implements Callable<Integer> {
                 request.setName(name);
                 request.setPublisher(publisher);
                 request.setBillboardDebut(billboardTop);
-                request.setReleaseDate(null);
+                if (releaseDate != null) {
+                    request.setReleaseDate(dateToGregorian(releaseDate));
+                }
 
                 CreateAlbumResponse response = (CreateAlbumResponse) webServiceTemplate.marshalSendAndReceive(
                         "http://localhost:8080/ws",
@@ -105,15 +104,20 @@ public class Client implements Callable<Integer> {
                         request
                 );
                 if (!response.getError().isEmpty()) {
-                    System.out.println("Can not update album with error: " + response.getError());
+                    System.out.println("Can not delete album with error: " + response.getError());
+                } else {
+                    System.out.println("Successfully deleted album: " + request.getId());
                 }
                 break;
             }
             case updateAlbum: {
                 UpdateAlbumRequest request = new UpdateAlbumRequest();
                 request.setId(id);
-                request.setAuthor(author);
                 request.setName(name);
+                request.setAuthor(author);
+                request.setPublisher(publisher);
+                request.setBillboardDebut(billboardTop);
+                request.setReleaseDate(dateToGregorian(releaseDate));
 
                 UpdateAlbumResponse response = (UpdateAlbumResponse) webServiceTemplate.marshalSendAndReceive(
                         "http://localhost:8080/ws",
@@ -129,5 +133,12 @@ public class Client implements Callable<Integer> {
         }
 
         return 0;
+    }
+
+    // this example implements Callable, so parsing, error handling and handling user
+    // requests for usage help or version help can be done with one line of code.
+    public static void main(String... args) {
+        int exitCode = new CommandLine(new Client()).execute(args);
+        System.exit(exitCode);
     }
 }

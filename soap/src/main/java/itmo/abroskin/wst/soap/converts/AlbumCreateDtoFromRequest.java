@@ -5,19 +5,24 @@ import org.springframework.stereotype.Component;
 import org.springframework.core.convert.converter.Converter;
 import wst.abroskin.itmo.CreateAlbumRequest;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Date;
+
+import static itmo.abroskin.wst.core.utils.DateConverter.gregorianToDate;
+
 @Component
 public class AlbumCreateDtoFromRequest implements Converter<CreateAlbumRequest, AlbumCreateDto> {
     @Override
     public AlbumCreateDto convert(CreateAlbumRequest createAlbumRequest) {
         final AlbumCreateDto dto = new AlbumCreateDto();
 
-//        System.out.println(createAlbumRequest);
         dto.setAuthor(createAlbumRequest.getAuthor());
         dto.setBillboardDebut(createAlbumRequest.getBillboardDebut());
-//        dto.setDate(new java.util.Date(createAlbumRequest.getReleaseDate().getMillisecond()));
+        dto.setDate(gregorianToDate(createAlbumRequest.getReleaseDate()));
         dto.setName(createAlbumRequest.getName());
         dto.setPublisher(createAlbumRequest.getPublisher());
 
         return dto;
     }
+
 }

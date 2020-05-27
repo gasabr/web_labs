@@ -2,6 +2,7 @@ package itmo.abroskin.wst.soap.endpoints;
 
 import itmo.abroskin.wst.core.models.Album;
 import itmo.abroskin.wst.core.services.album.dto.AlbumCreateDto;
+import itmo.abroskin.wst.core.services.album.dto.AlbumDeleteDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumSearchQueryDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,9 +65,29 @@ public class AlbumEndpoint {
         final AlbumUpdateDto dto = conversionService.convert(request, AlbumUpdateDto.class);
         final UpdateAlbumResponse response = new UpdateAlbumResponse();
 
-        albumService.updateAlbum(dto);
+        try {
+            albumService.updateAlbum(dto);
+            response.setName(dto != null ? dto.getName() : "");
+        } catch (Exception e) {
+            response.setError(e.getMessage());
+        }
 
-        response.setName(dto != null ? dto.getName() : "");
+
+        return response;
+    }
+
+    @PayloadRoot(namespace = namespace, localPart = "deleteAlbumRequest")
+    @ResponsePayload
+    public DeleteAlbumResponse deleteAlbum(@RequestPayload DeleteAlbumRequest request) {
+        final AlbumDeleteDto dto = conversionService.convert(request, AlbumDeleteDto.class);
+        final DeleteAlbumResponse response = new DeleteAlbumResponse();
+
+        try {
+            albumService.deleteAlbum(dto);
+            response.setError("");
+        } catch (Exception e) {
+            response.setError(e.getMessage());
+        }
 
         return response;
     }

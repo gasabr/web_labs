@@ -5,6 +5,8 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import wst.abroskin.itmo.UpdateAlbumRequest;
 
+import static itmo.abroskin.wst.core.utils.DateConverter.gregorianToDate;
+
 @Component
 public class AlbumUpdateDtoFromRequest implements Converter<UpdateAlbumRequest, AlbumUpdateDto> {
     @Override
@@ -13,7 +15,7 @@ public class AlbumUpdateDtoFromRequest implements Converter<UpdateAlbumRequest, 
 
         dto.setAuthor(updateAlbumRequest.getAuthor());
         dto.setBillboardDebut(updateAlbumRequest.getBillboardDebut());
-        dto.setDate(new java.util.Date(updateAlbumRequest.getReleaseDate().getMillisecond()));
+        dto.setDate(gregorianToDate(updateAlbumRequest.getReleaseDate()));
         dto.setName(updateAlbumRequest.getName());
         dto.setPublisher(updateAlbumRequest.getPublisher());
 
