@@ -1,15 +1,9 @@
 package itmo.abroskin.wst.rest_client;
 
-import org.apache.http.client.methods.HttpGet;
-import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.web.server.handler.ExceptionHandlingWebHandler;
-import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
-import wst.abroskin.itmo.*;
 
-import java.net.HttpURLConnection;
 
 import org.apache.http.client.utils.URIBuilder;
 
@@ -20,7 +14,6 @@ import java.net.http.HttpResponse;
 import java.util.Date;
 import java.util.concurrent.Callable;
 
-import static itmo.abroskin.wst.core.utils.DateConverter.dateToGregorian;
 
 enum Command {
     searchAlbum,
@@ -63,7 +56,7 @@ public class Client implements Callable<Integer> {
 
         switch (command) {
             case searchAlbum: {
-                builder.setPath("/search/");
+                builder.setPath("/album/");
                 if (id != null) {
                     builder.setParameter("id", String.valueOf(id));
                 }
@@ -78,9 +71,11 @@ public class Client implements Callable<Integer> {
                 break;
             }
             case createAlbum: {
+                builder.setPath("/album/");
                 HttpRequest request = HttpRequest.newBuilder()
+                        .setHeader("content-type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString("{}"))
-                        .uri(URI.create(host))
+                        .uri(builder.build())
                         .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 System.out.println(response);
@@ -90,7 +85,7 @@ public class Client implements Callable<Integer> {
                 String url = "";
 
                 if (id != null) {
-                    url = host + id + "/";
+                    builder.setPath("/album/" + id + "/");
                 } else {
                     System.out.println("Please enter the `id` to delete album.");
                     break;
@@ -107,7 +102,7 @@ public class Client implements Callable<Integer> {
                 String url = "";
 
                 if (id != null) {
-                    url = host + id + "/";
+                    builder.setPath("/album/" + id + "/");
                 } else {
                     System.out.println("Please enter the `id` to update album.");
                     break;
