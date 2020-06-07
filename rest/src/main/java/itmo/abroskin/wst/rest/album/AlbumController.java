@@ -6,10 +6,11 @@ import itmo.abroskin.wst.core.services.album.dto.AlbumCreateDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumDeleteDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumSearchQueryDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumUpdateDto;
+import itmo.abroskin.wst.rest.models.AlbumDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.web.bind.annotation.*;
-import wst.abroskin.itmo.*;
+import itmo.abroskin.wst.rest.album.models.*;
 
 import java.util.List;
 import java.util.stream.Collectors;

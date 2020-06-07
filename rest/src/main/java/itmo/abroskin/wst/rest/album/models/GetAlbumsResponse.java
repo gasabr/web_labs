@@ -9,6 +9,10 @@ public class GetAlbumsResponse {
 
     protected List<AlbumDto> albums;
 
+    public void setAlbums(List<AlbumDto> albums) {
+        this.albums = albums;
+    }
+
     /**
      * Gets the value of the albums property.
      * 
