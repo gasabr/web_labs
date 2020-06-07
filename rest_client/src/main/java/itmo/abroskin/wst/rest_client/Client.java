@@ -22,8 +22,8 @@ enum Command {
     deleteAlbum,
 }
 
-@CommandLine.Command(name = "soap_client", mixinStandardHelpOptions = true, version = "0.1",
-        description = "soap client for wst labs.")
+@CommandLine.Command(name = "rest_client", mixinStandardHelpOptions = true, version = "0.1",
+        description = "rest client for wst labs.")
 public class Client implements Callable<Integer> {
 
     @CommandLine.Parameters(index = "0", description = "Valid values: ${COMPLETION-CANDIDATES}")
@@ -79,6 +79,7 @@ public class Client implements Callable<Integer> {
                         .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 System.out.println(response);
+                System.out.println(response.body());
                 break;
             }
             case deleteAlbum: {

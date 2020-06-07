@@ -3,7 +3,7 @@ package itmo.abroskin.wst.rest.album.converts;
 import itmo.abroskin.wst.core.services.album.dto.AlbumSearchQueryDto;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import wst.abroskin.itmo.GetAlbumsRequest;
+import itmo.abroskin.wst.rest.album.models.GetAlbumsRequest;
 
 import java.util.Date;
 
@@ -17,8 +17,7 @@ public class AlbumSearchQueryDtoFromRequest implements Converter<GetAlbumsReques
         query.setName(source.getName());
         query.setAuthor(source.getAuthor());
         if (source.getReleaseDate() != null) {
-            Date releaseDate = new Date(source.getReleaseDate().getMillisecond());
-            query.setDate(releaseDate);
+            query.setDate(source.getReleaseDate());
         } else {
             query.setDate(null);
         }

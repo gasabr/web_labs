@@ -3,7 +3,7 @@ package itmo.abroskin.wst.rest.album.converts;
 import itmo.abroskin.wst.core.services.album.dto.AlbumDeleteDto;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import wst.abroskin.itmo.DeleteAlbumRequest;
+import itmo.abroskin.wst.rest.album.models.DeleteAlbumRequest;
 
 @Component
 public class AlbumDeleteDtoFromRequest implements Converter<DeleteAlbumRequest, AlbumDeleteDto> {

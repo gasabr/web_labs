@@ -36,6 +36,7 @@ public class AlbumController {
             final long id = crudService.createAlbum(dto);
             response.setId(id);
         } catch (Exception e) {
+            // I know that catching everything is bad practice, but that's not production-ready code
             throw new AlbumCreationFailure(400, e.getMessage());
         }
 
