@@ -6,12 +6,14 @@ import itmo.abroskin.wst.core.services.album.dto.AlbumCreateDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumDeleteDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumSearchQueryDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumUpdateDto;
+import itmo.abroskin.wst.rest.album.exceptions.AlbumCreationFailure;
 import itmo.abroskin.wst.rest.models.AlbumDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.web.bind.annotation.*;
 import itmo.abroskin.wst.rest.album.models.*;
 
+import javax.xml.ws.http.HTTPException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +36,7 @@ public class AlbumController {
             final long id = crudService.createAlbum(dto);
             response.setId(id);
         } catch (Exception e) {
-            response.setError(e.getMessage());
+            throw new AlbumCreationFailure(400, e.getMessage());
         }
 
         return response;
