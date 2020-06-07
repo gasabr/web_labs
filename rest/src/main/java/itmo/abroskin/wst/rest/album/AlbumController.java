@@ -7,6 +7,8 @@ import itmo.abroskin.wst.core.services.album.dto.AlbumDeleteDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumSearchQueryDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumUpdateDto;
 import itmo.abroskin.wst.rest.album.exceptions.AlbumCreationFailure;
+import itmo.abroskin.wst.rest.album.exceptions.AlbumDeletionFailure;
+import itmo.abroskin.wst.rest.album.exceptions.AlbumUpdateFailure;
 import itmo.abroskin.wst.rest.models.AlbumDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -66,7 +68,7 @@ public class AlbumController {
             crudService.updateAlbum(dto);
             response.setName(dto.getName() != null ? dto.getName() : String.valueOf(id));
         } catch (Exception e) {
-            response.setError(e.getMessage());
+            throw new AlbumUpdateFailure(400, e.getMessage());
         }
 
         return response;
@@ -81,7 +83,7 @@ public class AlbumController {
             crudService.deleteAlbum(dto);
             response.setError("");
         } catch (Exception e) {
-            response.setError(e.getMessage());
+            throw new AlbumDeletionFailure(400, e.getMessage());
         }
 
         return response;
