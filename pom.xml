@@ -21,6 +21,7 @@
         <module>soap_client</module>
         <module>rest</module>
         <module>rest_client</module>
+        <module>juddi</module>
     </modules>
 
 
