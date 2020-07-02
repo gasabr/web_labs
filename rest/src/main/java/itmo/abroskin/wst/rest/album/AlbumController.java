@@ -1,5 +1,9 @@
 package itmo.abroskin.wst.rest.album;
 
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Bucket4j;
+import io.github.bucket4j.Refill;
 import itmo.abroskin.wst.core.models.Album;
 import itmo.abroskin.wst.core.services.album.AlbumCRUDService;
 import itmo.abroskin.wst.core.services.album.dto.AlbumCreateDto;
@@ -12,10 +16,13 @@ import itmo.abroskin.wst.rest.album.exceptions.AlbumUpdateFailure;
 import itmo.abroskin.wst.rest.models.AlbumDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import itmo.abroskin.wst.rest.album.models.*;
 
 import javax.xml.ws.http.HTTPException;
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,26 +30,33 @@ import java.util.stream.Collectors;
 public class AlbumController {
     private AlbumCRUDService crudService;
     private ConversionService conversionService;
+    private final Bucket bucket;
 
     @Autowired
     public AlbumController(AlbumCRUDService crudService, ConversionService conversionService) {
         this.crudService = crudService;
         this.conversionService = conversionService;
+        Bandwidth limit = Bandwidth.classic(200, Refill.greedy(200, Duration.ofMinutes(1)));
+        this.bucket = Bucket4j.builder().addLimit(limit).build();
     }
 
     @PostMapping("/album/")
     public CreateAlbumResponse createAlbum(@RequestBody CreateAlbumRequest request) {
         final CreateAlbumResponse response = new CreateAlbumResponse();
-        try {
-            final AlbumCreateDto dto = conversionService.convert(request, AlbumCreateDto.class);
-            final long id = crudService.createAlbum(dto);
-            response.setId(id);
-        } catch (Exception e) {
-            // I know that catching everything is bad practice, but that's not production-ready code
-            throw new AlbumCreationFailure(400, e.getMessage());
+        if (bucket.tryConsume(1)) {
+            try {
+                final AlbumCreateDto dto = conversionService.convert(request, AlbumCreateDto.class);
+                final long id = crudService.createAlbum(dto);
+                response.setId(id);
+            } catch (Exception e) {
+                // I know that catching everything is bad practice, but that's not production-ready code
+                throw new AlbumCreationFailure(400, e.getMessage());
+            }
+
+            return response;
         }
 
-        return response;
+        throw new AlbumCreationFailure(429, "above rate limit, sry");
     }
 
     @GetMapping("/album/{id}/")
@@ -64,14 +78,18 @@ public class AlbumController {
         final AlbumUpdateDto dto = conversionService.convert(request, AlbumUpdateDto.class);
         final UpdateAlbumResponse response = new UpdateAlbumResponse();
 
-        try {
-            crudService.updateAlbum(dto);
-            response.setName(dto.getName() != null ? dto.getName() : String.valueOf(id));
-        } catch (Exception e) {
-            throw new AlbumUpdateFailure(400, e.getMessage());
-        }
+        if (bucket.tryConsume(1)) {
+            try {
+                crudService.updateAlbum(dto);
+                response.setName(dto.getName() != null ? dto.getName() : String.valueOf(id));
+            } catch (Exception e) {
+                throw new AlbumUpdateFailure(400, e.getMessage());
+            }
 
-        return response;
+            return response;
+        } else {
+            throw new AlbumUpdateFailure(429, "above rate limit");
+        }
     }
 
     @DeleteMapping("/album/{id}/")
@@ -79,14 +97,18 @@ public class AlbumController {
         final AlbumDeleteDto dto = conversionService.convert(request, AlbumDeleteDto.class);
         final DeleteAlbumResponse response = new DeleteAlbumResponse();
 
-        try {
-            crudService.deleteAlbum(dto);
-            response.setError("");
-        } catch (Exception e) {
-            throw new AlbumDeletionFailure(400, e.getMessage());
-        }
+        if (bucket.tryConsume(1)) {
+            try {
+                crudService.deleteAlbum(dto);
+                response.setError("");
+            } catch (Exception e) {
+                throw new AlbumDeletionFailure(400, e.getMessage());
+            }
 
-        return response;
+            return response;
+        } else {
+            throw new AlbumDeletionFailure(429, "above rate limit");
+        }
     }
 
 }
