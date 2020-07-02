@@ -1,6 +1,7 @@
 package itmo.abroskin.wst.rest_client;
 
 
+import org.springframework.http.HttpHeaders;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
@@ -11,6 +12,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Base64;
 import java.util.Date;
 import java.util.concurrent.Callable;
 
@@ -54,6 +56,8 @@ public class Client implements Callable<Integer> {
         URIBuilder builder = new URIBuilder();
         builder.setScheme("http").setHost("localhost").setPort(8080);
 
+        String encoding = Base64.getEncoder().encodeToString(("user:password").getBytes());
+
         switch (command) {
             case searchAlbum: {
                 builder.setPath("/album/");
@@ -75,6 +79,7 @@ public class Client implements Callable<Integer> {
                 HttpRequest request = HttpRequest.newBuilder()
                         .setHeader("content-type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString("{}"))
+                        .setHeader(HttpHeaders.AUTHORIZATION, encoding)
                         .uri(builder.build())
                         .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -95,6 +100,7 @@ public class Client implements Callable<Integer> {
                 HttpRequest request = HttpRequest.newBuilder()
                         .DELETE()
                         .uri(URI.create(url))
+                        .setHeader(HttpHeaders.AUTHORIZATION, encoding)
                         .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 System.out.println(response);
@@ -111,6 +117,7 @@ public class Client implements Callable<Integer> {
                 HttpRequest request = HttpRequest.newBuilder()
                         .PUT(HttpRequest.BodyPublishers.ofString("{}"))
                         .uri(URI.create(url))
+                        .setHeader(HttpHeaders.AUTHORIZATION, encoding)
                         .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 System.out.println(response);
