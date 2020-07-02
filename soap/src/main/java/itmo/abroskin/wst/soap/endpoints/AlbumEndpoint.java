@@ -5,6 +5,7 @@ import itmo.abroskin.wst.core.services.album.dto.AlbumCreateDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumDeleteDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumSearchQueryDto;
 import itmo.abroskin.wst.core.services.album.dto.AlbumUpdateDto;
+import itmo.abroskin.wst.soap.config.SecuredByBasicAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
@@ -44,6 +45,7 @@ public class AlbumEndpoint {
         return response;
     }
 
+    @SecuredByBasicAuth
     @PayloadRoot(namespace = namespace, localPart = "createAlbumRequest")
     @ResponsePayload
     public CreateAlbumResponse createAlbum(@RequestPayload CreateAlbumRequest request) {
@@ -59,6 +61,7 @@ public class AlbumEndpoint {
         return response;
     }
 
+    @SecuredByBasicAuth
     @PayloadRoot(namespace = namespace, localPart = "updateAlbumRequest")
     @ResponsePayload
     public UpdateAlbumResponse updateAlbum(@RequestPayload UpdateAlbumRequest request) {
@@ -76,6 +79,7 @@ public class AlbumEndpoint {
         return response;
     }
 
+    @SecuredByBasicAuth
     @PayloadRoot(namespace = namespace, localPart = "deleteAlbumRequest")
     @ResponsePayload
     public DeleteAlbumResponse deleteAlbum(@RequestPayload DeleteAlbumRequest request) {

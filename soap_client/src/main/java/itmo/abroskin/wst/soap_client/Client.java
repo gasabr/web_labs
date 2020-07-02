@@ -1,8 +1,10 @@
 package itmo.abroskin.wst.soap_client;
 
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
+import org.springframework.ws.transport.http.HttpComponentsMessageSender;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 import wst.abroskin.itmo.*;
@@ -59,6 +61,9 @@ public class Client implements Callable<Integer> {
         webServiceTemplate.setUnmarshaller(marshaller);
         webServiceTemplate.afterPropertiesSet();
 
+        HttpComponentsMessageSender messageSender = new HttpComponentsMessageSender();
+        messageSender.setCredentials(new UsernamePasswordCredentials("user", "password"));
+
         switch (command) {
             case searchAlbum: {
                 GetAlbumsRequest request = new GetAlbumsRequest();
@@ -88,6 +93,7 @@ public class Client implements Callable<Integer> {
                     request.setReleaseDate(dateToGregorian(releaseDate));
                 }
 
+                webServiceTemplate.setMessageSender(messageSender);
                 CreateAlbumResponse response = (CreateAlbumResponse) webServiceTemplate.marshalSendAndReceive(
                         "http://localhost:8080/ws",
                         request
@@ -99,6 +105,7 @@ public class Client implements Callable<Integer> {
                 DeleteAlbumRequest request = new DeleteAlbumRequest();
                 request.setId(id);
 
+                webServiceTemplate.setMessageSender(messageSender);
                 DeleteAlbumResponse response = (DeleteAlbumResponse) webServiceTemplate.marshalSendAndReceive(
                         "http://localhost:8080/ws",
                         request
@@ -119,6 +126,7 @@ public class Client implements Callable<Integer> {
                 request.setBillboardDebut(billboardTop);
                 request.setReleaseDate(dateToGregorian(releaseDate));
 
+                webServiceTemplate.setMessageSender(messageSender);
                 UpdateAlbumResponse response = (UpdateAlbumResponse) webServiceTemplate.marshalSendAndReceive(
                         "http://localhost:8080/ws",
                         request
